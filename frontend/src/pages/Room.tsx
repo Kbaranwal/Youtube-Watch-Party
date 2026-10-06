@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useRoomSocket } from "../hooks/useRoomSocket";
+import { useFullscreen } from "../hooks/useFullscreen";
 import Player from "../components/Player";
 import ParticipantList from "../components/ParticipantList";
 import Chat from "../components/Chat";
@@ -20,6 +21,7 @@ export default function Room({ roomId, username, onLeave }: Props) {
     error, clearError, removed, roomMissing, send, leaveRoom,
   } = useRoomSocket(roomId, username);
 
+  const fullscreen = useFullscreen();
   const [videoInput, setVideoInput] = useState("");
   const [copied, setCopied] = useState(false);
 
@@ -70,6 +72,9 @@ export default function Room({ roomId, username, onLeave }: Props) {
     onLeave();
   }
 
+  const stageClass =
+    "stage" + (fullscreen.isFullscreen ? " fs" : "") + (fullscreen.fallback ? " fs-fallback" : "");
+
   return (
     <div className="room">
       <header className="topbar">
@@ -100,19 +105,21 @@ export default function Room({ roomId, username, onLeave }: Props) {
 
       <div className="layout">
         <div className="left">
-          <div className="card player-card">
-            <div className="stage">
+          <div className={`card player-card${fullscreen.fallback ? " fs-active" : ""}`}>
+            <div ref={fullscreen.ref} className={stageClass}>
               <Player
                 videoState={videoState}
                 canControl={canControl}
+                isFullscreen={fullscreen.isFullscreen}
+                onToggleFullscreen={fullscreen.toggle}
                 onPlay={(time) => send({ type: "play", time })}
                 onPause={(time) => send({ type: "pause", time })}
                 onSeek={(time) => send({ type: "seek", time })}
+                onSetRate={(rate) => send({ type: "set_rate", rate })}
               />
               <FloatingReactions items={reactions} />
+              <ReactionBar onReact={(emoji) => send({ type: "reaction", emoji })} />
             </div>
-
-            <ReactionBar onReact={(emoji) => send({ type: "reaction", emoji })} />
 
             {canControl ? (
               <div className="row" style={{ marginTop: 14 }}>

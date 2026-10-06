@@ -6,6 +6,7 @@ PERMISSIONS = {
     "pause": {Role.HOST, Role.MODERATOR},
     "seek": {Role.HOST, Role.MODERATOR},
     "change_video": {Role.HOST, Role.MODERATOR},
+    "set_rate": {Role.HOST, Role.MODERATOR},
     "approve_request": {Role.HOST, Role.MODERATOR},
     "reject_request": {Role.HOST, Role.MODERATOR},
     "assign_role": {Role.HOST},

@@ -15,6 +15,9 @@ RECONNECT_GRACE_SECONDS = 30
 # Emoji reactions allowed in a room (compared without the invisible variation selector).
 ALLOWED_REACTIONS = {"\U0001F44D", "\u2764", "\U0001F602", "\U0001F62E", "\U0001F525", "\U0001F44F"}
 
+# Playback speeds the room can use (the same list YouTube offers).
+ALLOWED_RATES = {0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0}
+
 
 def extract_video_id(value: str) -> str | None:
     """Extract an 11-character YouTube video ID from a URL or a raw ID."""
@@ -36,7 +39,7 @@ class MessageHandler:
         action = data.get("type")
 
         # Role enforcement happens on the server, never only in the UI.
-        restricted = {"play", "pause", "seek", "change_video",
+        restricted = {"play", "pause", "seek", "change_video", "set_rate",
                       "approve_request", "reject_request",
                       "assign_role", "remove_participant", "transfer_host"}
         if action in restricted and not can(sender.role, action):
@@ -69,6 +72,13 @@ class MessageHandler:
             room.set_state(video_id=video_id)
             await room.broadcast({"type": "sync_state", **room.state_dict()})
             await self._save_state(room)
+
+        elif action == "set_rate":
+            rate = data.get("rate")
+            if not isinstance(rate, (int, float)) or float(rate) not in ALLOWED_RATES:
+                return await self._error(sender, "Unsupported playback speed.")
+            room.set_rate(float(rate))
+            await room.broadcast({"type": "sync_state", **room.state_dict()})
 
         elif action == "request_video":
             await self._request_video(room, sender, data)

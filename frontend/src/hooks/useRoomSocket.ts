@@ -13,6 +13,7 @@ export interface VideoState {
   videoId: string | null;
   playState: "playing" | "paused";
   currentTime: number;
+  playbackRate: number;
 }
 
 export interface ChatMessage {
@@ -134,7 +135,12 @@ export function useRoomSocket(roomId: string, username: string) {
             myIdRef.current = d.userId;
             setMyId(d.userId);
             setParticipants(d.participants);
-            setVideoState(d.state);
+            setVideoState({
+              videoId: d.state.videoId,
+              playState: d.state.playState,
+              currentTime: d.state.currentTime,
+              playbackRate: d.state.playbackRate ?? 1,
+            });
             setChat(d.chat ?? []); // recent chat history
             setRequests(d.requests ?? []);
             setMyRequest(
@@ -162,6 +168,7 @@ export function useRoomSocket(roomId: string, username: string) {
               videoId: d.videoId,
               playState: d.playState,
               currentTime: d.currentTime,
+              playbackRate: d.playbackRate ?? 1,
             });
             break;
           case "chat":

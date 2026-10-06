@@ -21,14 +21,15 @@ class Room:
         self.requests: dict[str, dict] = {}    # pending "change video" requests
         self.video_id: str | None = None
         self.play_state: str = "paused"        # "playing" or "paused"
+        self.rate: float = 1.0                 # shared playback speed
         self._time: float = 0.0                # last known playback position (seconds)
         self._updated_at: float = time.time()  # when that position was recorded
 
     # ---------- video state ----------
     def get_current_time(self) -> float:
-        # While playing, add the time elapsed since the last update.
+        # While playing, add the time elapsed since the last update (scaled by the speed).
         if self.play_state == "playing":
-            return self._time + (time.time() - self._updated_at)
+            return self._time + (time.time() - self._updated_at) * self.rate
         return self._time
 
     def set_state(self, play_state=None, current_time=None, video_id=None):
@@ -42,11 +43,18 @@ class Room:
             self.play_state = play_state
         self._updated_at = time.time()
 
+    def set_rate(self, rate: float):
+        """Change the playback speed without moving the current position."""
+        self._time = self.get_current_time()
+        self._updated_at = time.time()
+        self.rate = rate
+
     def state_dict(self) -> dict:
         return {
             "videoId": self.video_id,
             "playState": self.play_state,
             "currentTime": self.get_current_time(),
+            "playbackRate": self.rate,
         }
 
     # ---------- chat ----------
