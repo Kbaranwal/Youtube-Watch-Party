@@ -52,12 +52,12 @@ Create a room, invite your friends and watch one video in real time, with role-b
 ## 📸 Screenshots
 
 <p align="center">
-  <img src="C:\Users\kbara\OneDrive\Desktop\Youtube Watch Party System\docs\home.png" width="48%" alt="Home page">
-  <img src="C:\Users\kbara\OneDrive\Desktop\Youtube Watch Party System\docs\room-host.png" width="48%" alt="Watch room, Host view">
+  <img src="docs/home.png" width="48%" alt="Home page">
+  <img src="docs/room-host.png" width="48%" alt="Watch room, Host view">
 </p>
 <p align="center">
-  <img src="C:\Users\kbara\OneDrive\Desktop\Youtube Watch Party System\docs\room-participant.png" width="48%" alt="Participant view">
-  <img src="C:\Users\kbara\OneDrive\Desktop\Youtube Watch Party System\docs\room-moderator.png" width="48%" alt="Moderator view">
+  <img src="docs/room-participant.png" width="48%" alt="Participant view">
+  <img src="docs/room-moderator.png" width="48%" alt="Moderator view">
 </p>
 
 ---
